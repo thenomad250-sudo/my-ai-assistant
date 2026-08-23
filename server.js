@@ -1,4 +1,4 @@
-const express = require("express");
+9010224269const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
 
@@ -35,6 +35,8 @@ app.get("/", (req, res) => {
   res.send("My AI Assistant is running!");
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+ const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
