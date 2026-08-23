@@ -1,4 +1,4 @@
-9010224269const express = require("express");
+const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
 
@@ -7,15 +7,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const port = process.env.PORT || 3000;
+
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+app.get("/", (req, res) => {
+  res.json({
+    status: "online",
+    message: "My AI Assistant is running!"
+  });
+});
+
 app.post("/chat", async (req, res) => {
   try {
+    const message = req.body.message;
+
+    if (!message) {
+      return res.status(400).json({
+        error: "Message is required."
+      });
+    }
+
     const response = await client.responses.create({
-      model: "gpt-5.6",
-      input: req.body.message
+      model: "gpt-5.6-luna",
+      input: message
     });
 
     res.json({
@@ -23,20 +40,14 @@ app.post("/chat", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("OpenAI Error:", error);
 
     res.status(500).json({
-      error: "AI connection failed."
+      error: "The AI could not respond."
     });
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("My AI Assistant is running!");
-});
-
- const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`AI Assistant running on port ${port}`);
 });
